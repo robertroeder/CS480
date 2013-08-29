@@ -2,7 +2,7 @@
 #include <GL/glut.h> // doing otherwise causes compiler shouting
 #include <iostream>
 #include <chrono>
-
+#include <fstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp> //Makes passing matrices to shaders easier
@@ -49,6 +49,8 @@ void cleanUp();
 float getDT();
 std::chrono::time_point<std::chrono::high_resolution_clock> t1,t2;
 
+//Shader Loader
+const char* loadShaderFromFile(const char* fileName);
 
 //--Main
 int main(int argc, char **argv)
@@ -143,7 +145,10 @@ void update()
     float dt = getDT();// if you have anything moving, use dt.
 
     angle += dt * M_PI/2; //move through 90 degrees a second
+    float rotAngle = angle*360/M_PI;
+    
     model = glm::translate( glm::mat4(1.0f), glm::vec3(4.0 * sin(angle), 0.0, 4.0 * cos(angle)));
+    model = glm::rotate(model, rotAngle, glm::vec3(0, 1, 0));
     // Update the state of the scene
     glutPostRedisplay();//call the display callback
 }
@@ -235,24 +240,11 @@ bool initialize()
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 
     //Shader Sources
-    // Put these into files and write a loader in the future
-    // Note the added uniform!
-    const char *vs =
-        "attribute vec3 v_position;"
-        "attribute vec3 v_color;"
-        "varying vec3 color;"
-        "uniform mat4 mvpMatrix;"
-        "void main(void){"
-        "   gl_Position = mvpMatrix * vec4(v_position, 1.0);"
-        "   color = v_color;"
-        "}";
-
-    const char *fs =
-        "varying vec3 color;"
-        "void main(void){"
-        "   gl_FragColor = vec4(color.rgb, 1.0);"
-        "}";
-
+    // Now uses the shader loader
+    // Given our current file structure, these paths should always work
+    const char *vs = loadShaderFromFile("../src/vs.txt");
+    const char *fs = loadShaderFromFile("../src/fs.txt");
+    
     //compile the shaders
     GLint shader_status;
 
@@ -355,3 +347,29 @@ float getDT()
     t1 = std::chrono::high_resolution_clock::now();
     return ret;
 }
+
+//Loads a shader from a text file
+const char* loadShaderFromFile(const char* fileName)
+{
+  std::string fileContents;
+  
+  std::ifstream in(fileName, std::ios::in | std::ios::binary);
+  if (in)
+  {
+    in.seekg(0, std::ios::end);
+    fileContents.resize(in.tellg());
+    in.seekg(0, std::ios::beg);
+    in.read(&fileContents[0], fileContents.size());
+    in.close();
+  }
+  else
+  {
+    std::cout << std::endl << "Could not open shader file: " << fileName << std::endl << std::endl;
+    throw;
+  }
+  
+  char * shader = new char[fileContents.size()];
+  strcpy(shader, fileContents.c_str());
+  return shader;
+}
+
