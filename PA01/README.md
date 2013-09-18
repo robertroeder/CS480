@@ -1,27 +1,13 @@
-A simple example of matrix use in OpenGL
-========================================
+## Project 1
+### Purpose
+The purpose of this assignment was to:
+- Add rotation to an orbiting cube
+- Remove hard coded shaders and implement a shader loader
 
-Building This Example
----------------------
+### Problems Encountered
+- GLM Rotate function requires a float in degrees, not a double or int
+- Returning a pointer to the shader from the load function needed to preserve the memory that was allocated inside the function
 
-*This example requires GLM*
-*On ubuntu it can be installed with this command*
-
->$ sudo apt-get install libglm-dev
-
-*On a Mac you can install GLM with this command(using homebrew)*
->$ brew install glm
-
-To build this example just 
-
->$ cd build
->$ make
-
-*If you are using a Mac you will need to edit the makefile in the build directory*
-
-The excutable will be put in bin
-
-Additional Notes For OSX Users
-------------------------------
-
-Ensure that the latest version of the Developer Tools is installed.
+### Instructions
+- Enter the "build" directory and type make
+- Enter the "bin" directory and run the Matrix executable
