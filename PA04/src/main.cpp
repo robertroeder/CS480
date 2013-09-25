@@ -38,7 +38,8 @@ int PLANET_MOD = 1;
 float SPEED_MOD = 3;
 GLuint program;// The GLSL program handle
 GLuint vbo_geometry;// VBO handle for our geometry
-
+unsigned int numVertices=36; 
+char *objFileName="assets/models/table.obj";
 //uniform locations
 GLint loc_mvpmat;// Location of the modelviewprojection matrix in the shader
 
@@ -86,7 +87,11 @@ void glutPrintText(float x, float y, char* text, void * font,
                               float r, float g, float b, float a);
 //--Main
 int main(int argc, char **argv)
-{
+{	
+	if( argc > 1 )
+	{
+		objFileName=argv[1];
+	}
     // Initialize glut
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
@@ -173,7 +178,7 @@ void render()
                              sizeof(Vertex),
                              (void*)offsetof(Vertex,color));
 
-      glDrawArrays(GL_TRIANGLES, 0, 36);//mode, starting index, count
+      glDrawArrays(GL_TRIANGLES, 0, numVertices);//mode, starting index, count
     }
     //clean up
     glDisableVertexAttribArray(loc_position);
@@ -193,6 +198,7 @@ void update()
     rotAngle += dt*90;
     //THIS IS THE OBJECT'S UPDATE
     models[0] = glm::rotate(glm::mat4(1.0f), rotAngle, glm::vec3(0, 1, 0));
+	//models[0] = glm::scale(models[0], glm::vec3(5,5,5));
     // Update the state of the scene
     glutPostRedisplay();//call the display callback
 }
@@ -258,68 +264,14 @@ void mouse(int button, int state, int x, int y)
 bool initialize()
 {
     // Initialize basic geometry and shaders for this example
-
-    //this defines a cube, this is why a model loader is nice
-    //you can also do this with a draw elements and indices, try to get that working
-    /*
-    Vertex geometry[] = { {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 0.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, -1.0}, {1.0, 1.0, 0.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 0.0}},
-                          
-                          {{1.0, -1.0, 1.0}, {1.0, 0.0, 1.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-                          {{1.0, -1.0, -1.0}, {1.0, 0.0, 0.0}},
-                          
-                          {{1.0, 1.0, -1.0}, {1.0, 1.0, 0.0}},
-                          {{1.0, -1.0, -1.0}, {1.0, 0.0, 0.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-
-                          {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 0.0}},
-
-                          {{1.0, -1.0, 1.0}, {1.0, 0.0, 1.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 0.0, 1.0}},
-                          {{-1.0, -1.0, -1.0}, {0.0, 0.0, 0.0}},
-
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{-1.0, -1.0, 1.0}, {0.0, 0.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {1.0, 0.0, 1.0}},
-                          
-                          {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}},
-                          {{1.0, -1.0, -1.0}, {1.0, 0.0, 0.0}},
-                          {{1.0, 1.0, -1.0}, {1.0, 1.0, 0.0}},
-
-                          {{1.0, -1.0, -1.0}, {1.0, 0.0, 0.0}},
-                          {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {1.0, 0.0, 1.0}},
-
-                          {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}},
-                          {{1.0, 1.0, -1.0}, {1.0, 1.0, 0.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 0.0}},
-
-                          {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, -1.0}, {0.0, 1.0, 0.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-
-                          {{1.0, 1.0, 1.0}, {1.0, 1.0, 1.0}},
-                          {{-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}},
-                          {{1.0, -1.0, 1.0}, {1.0, 0.0, 1.0}}
-                        };
-    */
     std::vector<Vertex> geometryVec;
-    loadOBJ("assets/models/table.obj",geometryVec);
+    loadOBJ(objFileName,geometryVec);
     
     Vertex geometry[geometryVec.size()];
-    
+    numVertices = geometryVec.size();
     for( unsigned int i=0; i<geometryVec.size(); i++ )
     {
       geometry[i] = geometryVec[i];
-      //std::cout << geometry[i].position[0] << " " << geometry[i].position[1] << " " << geometry[i].position[2] << " " << std::endl;
     }
     // Create a Vertex Buffer object to store this vertex info on the GPU
     glGenBuffers(1, &vbo_geometry);
@@ -597,8 +549,24 @@ void split(const std::string &s, std::vector<unsigned int> &elems)
     elems.clear();
     std::istringstream is( s );
     unsigned int n;
-    while( is >> n ) 
-    {
-         elems.push_back(n);
-    }
+	if( s.find('/',0) !=std::string::npos )
+	{
+		char dummy;
+		unsigned int dummyN;
+		while( is >> n ) 
+		{
+			elems.push_back(n);
+			is >> dummy;
+			is >> dummyN;
+			is >> dummy;
+			is >> dummyN;	
+		}
+	}
+	else
+	{
+		while( is >> n ) 
+		{
+		     elems.push_back(n);
+		}
+	}
 }
