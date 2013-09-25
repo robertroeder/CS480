@@ -10,8 +10,8 @@ LIBS= -lglut -lGLEW -lGL
 # Compiler flags
 CXXFLAGS= -g -Wall -std=c++0x
 
-all: ../bin/Moons
+all: ../bin/Table
 
-../bin/Moons: ../src/main.cpp
-	$(CC) $(CXXFLAGS) ../src/main.cpp -o ../bin/Moons $(LIBS)
+../bin/Table: ../src/main.cpp
+	$(CC) $(CXXFLAGS) ../src/main.cpp -o ../bin/Table $(LIBS)
 

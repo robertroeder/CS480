@@ -1,16 +1,7 @@
-# PA03: Moons
+# PA04: Table / Object Loading Example
 
 ## Objective
-The objective of this project was to add another object to the program and have it orbit the first object. It was also necessary to add keyboard events to switch the direction the original cube was moving. An extra credit objective, which I completed, was to display the direction that the original cube is moving in the GLUT window.
+The objective of this project was to create a simple table model in blender and implement an object loader in our code. We were then to export our table model to a .obj file and load it in using our object loader.
 
-## Controls
-### Keyboard
-A or a      : Reverse rotation<br />
-\- or _      : Decrease rotation speed<br />
-= or +      : Increase rotation speed<br />
-Left Arrow  : Make planet move clockwise<br />
-Right Arrow : Make planet move counter-clockwise<br />
-### Mouse
-Left Click  : Reverse rotation<br />
-Right Click : Bring up menu<br />
-
+## Running the program
+Enter the build directory and type "make". Then enter the bin directory and run the Table executable. This will load the table.obj file in bin/assets/models with random coloring and make it spin in the center of the screen. There are two more .obj files in the models directory that can be tested. Just change the line in src/main.cpp that calls loadOBJ.

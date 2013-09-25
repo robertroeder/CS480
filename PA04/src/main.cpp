@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(w, h);
     // Name and create the Window
-    glutCreateWindow("Moons Example");
+    glutCreateWindow("Object Loading Example");
 
     // Now that the window is created the GL context is fully set up
     // Because of that we can now initialize GLEW to prepare work with shaders
@@ -312,7 +312,7 @@ bool initialize()
                         };
     */
     std::vector<Vertex> geometryVec;
-    loadOBJ("assets/models/cube.obj",geometryVec);
+    loadOBJ("assets/models/table.obj",geometryVec);
     
     Vertex geometry[geometryVec.size()];
     
