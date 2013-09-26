@@ -549,17 +549,13 @@ void split(const std::string &s, std::vector<unsigned int> &elems)
     elems.clear();
     std::istringstream is( s );
     unsigned int n;
-	if( s.find('/',0) !=std::string::npos )
+	if( s.find('/',0) != std::string::npos )
 	{
-		char dummy;
-		unsigned int dummyN;
+		std::string dummy;
 		while( is >> n ) 
 		{
 			elems.push_back(n);
 			is >> dummy;
-			is >> dummyN;
-			is >> dummy;
-			is >> dummyN;	
 		}
 	}
 	else
