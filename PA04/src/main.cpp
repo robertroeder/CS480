@@ -35,6 +35,7 @@ int w = 640, h = 480;// Window size
 int ROTATION_FLAG = 0;
 int SPIN_MOD = 1;
 int PLANET_MOD = 1;
+float scaleFactor=1;
 float SPEED_MOD = 3;
 GLuint program;// The GLSL program handle
 GLuint vbo_geometry;// VBO handle for our geometry
@@ -92,6 +93,10 @@ int main(int argc, char **argv)
 	{
 		objFileName=argv[1];
 	}
+  if( argc > 2 )
+  {
+    scaleFactor=atof(argv[2]);
+  }
     // Initialize glut
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
@@ -198,7 +203,7 @@ void update()
     rotAngle += dt*90;
     //THIS IS THE OBJECT'S UPDATE
     models[0] = glm::rotate(glm::mat4(1.0f), rotAngle, glm::vec3(0, 1, 0));
-	//models[0] = glm::scale(models[0], glm::vec3(5,5,5));
+    models[0] = glm::scale(models[0], glm::vec3(scaleFactor,scaleFactor,scaleFactor));
     // Update the state of the scene
     glutPostRedisplay();//call the display callback
 }
@@ -267,16 +272,11 @@ bool initialize()
     std::vector<Vertex> geometryVec;
     loadOBJ(objFileName,geometryVec);
     
-    Vertex geometry[geometryVec.size()];
     numVertices = geometryVec.size();
-    for( unsigned int i=0; i<geometryVec.size(); i++ )
-    {
-      geometry[i] = geometryVec[i];
-    }
     // Create a Vertex Buffer object to store this vertex info on the GPU
     glGenBuffers(1, &vbo_geometry);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_geometry);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(geometry), geometry, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*numVertices, &geometryVec[0], GL_STATIC_DRAW);
 
     //--Geometry done
 
